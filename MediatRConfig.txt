@@ -1,0 +1,2 @@
+
+services.AddMediatR(typeof(List.Handler).Assembly);

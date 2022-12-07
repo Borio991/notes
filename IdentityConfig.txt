@@ -1,0 +1,47 @@
+
+// config in extension method
+using Domain;
+using Microsoft.AspNetCore.Identity;
+using Persistence;
+
+namespace API.Extensions
+{
+    public static class IdentityServiceExtensions
+    {
+        public static IServiceCollection AddIdentityServices(this IServiceCollection services , IConfiguration config)
+        {
+            services.AddIdentityCore<AppUser>(opt => {
+                opt.Password.RequireNonAlphanumeric = false;
+            })
+            .AddEntityFrameworkStores<DataContext>()
+            .AddSignInManager<SignInManager<AppUser>>();
+            services.AddAuthentication();
+            return services;
+        }
+    }
+}
+
+// Add in startup class
+services.AddIdentityServices(_config);
+
+// Domain
+namespace Domain
+{
+    public class AppUser : IdentityUser
+    {
+        public string DisplayName { get; set; }
+        public string Bio { get; set; }
+    }
+}
+
+// Persistence
+namespace Persistence
+{
+    public class DataContext : IdentityDbContext<AppUser>
+    {
+        public DataContext(DbContextOptions options) : base(options)
+        {
+        }
+        public DbSet<Activity> Activities { get; set; } 
+    }
+}
